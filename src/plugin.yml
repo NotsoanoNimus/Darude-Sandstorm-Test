@@ -1,0 +1,10 @@
+main: xyz.xmit.Darude.Darude
+name: Darude
+version: 0.1
+description: An "intelligent" desert sandstorm plugin for StormWatch.
+api-version: 1.16
+load: POSTWORLD
+author: NotsoanoNimus <spigot-dev@xmit.xyz>
+website: xmit.xyz
+depend:
+  - StormWatch
