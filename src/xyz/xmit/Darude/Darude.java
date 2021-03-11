@@ -1,12 +1,13 @@
 package xyz.xmit.Darude;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import xyz.xmit.StormWatch.StormWatch;
+//import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 public class Darude extends JavaPlugin {
     public static Darude instance;
     public Darude() { Darude.instance = this; }
@@ -32,12 +33,18 @@ public class Darude extends JavaPlugin {
                 StormWatch.getStormManager().unregisterStormType(StormSandstorm.class);
             }
         } catch (Exception ex) {
-            if(this.getServer().getPluginManager().getPlugin("StormWatch") != null
-                && this.getServer().getPluginManager().getPlugin("StormWatch").isEnabled()
-                && StormWatch.getStormManager().getRegisteredStormTypes() != null) {
+            try {
+                if (this.getServer().getPluginManager().getPlugin("StormWatch") != null
+                        && Objects.requireNonNull(this.getServer().getPluginManager()
+                        .getPlugin("StormWatch")).isEnabled()
+                        && StormWatch.getStormManager().getRegisteredStormTypes() != null) {
                     this.getLogger().log(Level.WARNING,
-                        "Tried to unregister from an enabled StormWatch instance but failed. THIS IS A PROBLEM!");
+                            "Tried to unregister from an enabled StormWatch instance but failed. THIS IS A PROBLEM!");
                     ex.printStackTrace();
+                }
+            } catch(Exception exc) {
+                this.getLogger().log(Level.WARNING, "Fatal issue; cascading exceptions!");
+                exc.printStackTrace();
             }
         }
     }

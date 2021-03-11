@@ -10,11 +10,13 @@ import xyz.xmit.StormWatch.StormConfig;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 // KEYWORDS:
 //   - "Cycle": one count of X [configured] server ticks after which to add the next yaw from the range.
 
+@SuppressWarnings("unused")
 public class StormSandstorm extends Storm {
     public static final String TYPE_NAME = "sandstorm";
     public static final Biome[] APPROVED_BIOMES = {
@@ -143,6 +145,9 @@ public class StormSandstorm extends Storm {
     }
 
     @Override
+    protected void setPropertiesFromCommand(String[] strings) { }
+
+    @Override
     protected final boolean initializeStormTypeProperties() {
         Tuple<Double, Double> stormStrengthRange, originMovementSpeedRange;
         try {
@@ -209,7 +214,14 @@ public class StormSandstorm extends Storm {
             //// The yaw is based on the current storm "whirl" plus a value from 0 to the dithering threshold.
             blockLoc.setYaw((this.getStormYaw() + this.getRandomInt(0, this.yawDither)) % 360);
             //// Spawn the block and set its trajectory.
-            Entity e = blockLoc.getWorld().spawnFallingBlock(blockLoc, Material.SAND.createBlockData());
+            Entity e;
+            try {
+                e = Objects.requireNonNull(blockLoc.getWorld())
+                        .spawnFallingBlock(blockLoc, Material.SAND.createBlockData());
+            } catch(Exception ex) {
+                this.log(ex);
+                continue;
+            }
             e.setVelocity(blockLoc.getDirection().multiply(this.getNewSpeed()));
             this.addSpawnedEntity(e); //track the spawned block (why not)
         }
